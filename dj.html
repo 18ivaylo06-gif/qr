@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJ Panel</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    img {
+      width: 160px;
+      margin-bottom: 10px;
+      
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .song {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 5px solid #1db954;
+    }
+
+    .text {
+      text-align: left;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .lang {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+
+    button {
+      background: #ff4444;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: darkred;
+    }
+
+    .empty {
+      opacity: 0.6;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <img src="/logo.jpeg">
+    <h1>🎧 DJ Panel</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+ function getLanguageName(lang) {
+  if (lang === "EN") return "🇬🇧 English";
+  if (lang === "IT") return "🇮🇹 Italian";
+  if (lang === "ES") return "🇪🇸 Spanish";
+  if (lang === "FR") return "🇫🇷 French";
+  if (lang === "DE") return "🇩🇪 German";
+  
+}
+
+    async function load() {
+      const res = await fetch('/api');
+      const data = await res.json();
+
+      let html = "";
+
+      if (data.length === 0) {
+        html = "<p class='empty'>No requests yet...</p>";
+      } else {
+        data.forEach((r, i) => {
+          html += `
+            <div class="song">
+              <div class="text">
+                <div>${i+1}. ${r.song} - ${r.artist}</div>
+                <div class="lang">${getLanguageName(r.language)}</div>
+              </div>
+              <button onclick="remove(${i})">❌</button>
+            </div>
+          `;
+        });
+      }
+
+      document.getElementById("list").innerHTML = html;
+    }
+
+    async function remove(i) {
+      await fetch('/delete/' + i, { method: 'POST' });
+      load();
+    }
+
+    setInterval(load, 1500);
+    load();
+  </script>
+
+</body>
+</html>

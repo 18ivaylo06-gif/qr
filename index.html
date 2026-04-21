@@ -6,9 +6,7 @@
   <title>Song Request</title>
 
   <style>
-    * {
-      box-sizing: border-box; /* 🔥 FIX за центриране */
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,7 +27,6 @@
       max-width: 400px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.7);
       text-align: center;
-
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -41,15 +38,12 @@
     }
 
     h1 {
-      margin: 10px 0 25px;
-      font-size: 24px;
+      margin: 10px 0 20px;
     }
 
-    form {
-      width: 100%;
-    }
+    form { width: 100%; }
 
-    input {
+    input, select {
       width: 100%;
       padding: 16px;
       margin: 10px 0;
@@ -58,16 +52,10 @@
       font-size: 16px;
       background: #1e1e1e;
       color: white;
-      outline: none;
-      transition: 0.2s;
     }
 
-    input:focus {
-      box-shadow: 0 0 10px #1db954; /* ✨ glow */
-    }
-
-    input::placeholder {
-      color: #aaa;
+    select {
+      cursor: pointer;
     }
 
     button {
@@ -81,16 +69,6 @@
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #17a74a;
-      box-shadow: 0 0 15px #1db954;
-    }
-
-    button:active {
-      transform: scale(0.96);
     }
 
     #msg {
@@ -110,6 +88,17 @@
     <form id="form">
       <input type="text" name="song" placeholder="Song name" required>
       <input type="text" name="artist" placeholder="Artist name" required>
+
+      <!-- 🔥 NEW FIELD -->
+     <select name="language" required>
+    <option value="">Select language</option>
+    <option value="EN">🇬🇧 English</option>
+    <option value="IT">🇮🇹 Italian</option>
+    <option value="ES">🇪🇸 Spanish</option>
+    <option value="FR">🇫🇷 French</option>
+    <option value="DE">🇩🇪 German</option>
+    </select>
+
       <button type="submit">Send</button>
     </form>
 
@@ -118,6 +107,7 @@
 
   <script>
     const form = document.getElementById("form");
+    const msg = document.getElementById("msg");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -126,13 +116,16 @@
 
       await fetch("/add", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
         body: new URLSearchParams(formData)
       });
 
-      document.getElementById("msg").innerText = "✅ Sent!";
+      msg.innerText = "✅ Sent!";
       form.reset();
     });
   </script>
 
 </body>
-</html>
+</html> 
